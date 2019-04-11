@@ -5,7 +5,7 @@ class Node {
     this.value = value;
     this.next = null;
   }
-};
+}
 
 // swap
 function swap(array, i, j) {
@@ -114,50 +114,51 @@ function sortingWithLinkedList() {
     LLS.insertLast(testArray[i]);
   }
 
-  
-  const linkedListMergeSort = (lls, rightLLS) => {
-    if (isEmpty(lls) === 'Empty') {
-      return lls;
-    }
-
-    let { left, right } = splitList(lls, rightLLS);
-    
-    console.log({left});
-
-   
-    left = linkedListMergeSort(left);
-    right = linkedListMergeSort(right);
-
-    // merge
-    const merge = (left, right, lls) => {
-      console.log('ran')
-      let currentLeftNode = left.head;
-      let currentRightNode = right.head;
-      let tempNode = new Node();
-
-      while (currentLeftNode.next !== null) {
-        if (currentLeftNode.value > currentRightNode.value) {
-          tempNode = currentRightNode;
-          tempNode.next = currentLeftNode;
-          lls.head = tempNode;     
-        }
-        if (currentLeftNode.value < currentRightNode.value) {
-          tempNode = currentLeftNode;
-          tempNode.next = currentRightNode;
-          lls.head = tempNode;
-        }
-      }
-
-      return lls;
-    };
-
-    return merge(left, right, lls);
-  };
-
   linkedListMergeSort(LLS, rightLLS);
 
 }
+
+function linkedListMergeSort(lls, rightLLS) {
+  if (isEmpty(lls) === 'Empty') {
+    return lls;
+  }
+  console.log({ lls });
+
+  let { left, right } = splitList(lls, rightLLS);
+
+  left = linkedListMergeSort(left);
+  right = linkedListMergeSort(right);
+
+  // merge
+  return merge(left, right, lls);
+}
+
+function merge(left, right, lls) {
+  console.log(JSON.stringify({ left }));
+  let currentLeftNode = left.head;
+  let currentRightNode = right.head;
+  let tempNode = new Node();
+
+  while (currentLeftNode.next !== null) {
+    if (currentLeftNode.value > currentRightNode.value) {
+      tempNode = currentRightNode;
+      tempNode.next = currentLeftNode;
+      currentLeftNode = currentLeftNode.next;
+      lls.head = tempNode;
+    }
+    if (currentLeftNode.value < currentRightNode.value) {
+      tempNode = currentLeftNode;
+      tempNode.next = currentRightNode;
+      currentRightNode = currentRightNode.next;
+      lls.head = tempNode;
+    }
+  }
+  return lls;
+}
+
+
 function splitList(LLS, rightLLS) {
+  console.log({ rightLLS });
   
   if (rightLLS.head === null) {
     return rightLLS;
@@ -171,13 +172,30 @@ function splitList(LLS, rightLLS) {
   }
 
   middle.next = null;
-  console.log({LLS, rightLLS})
   return { left: LLS, right: rightLLS };
 }
+//sortingWithLinkedList();
 
-sortingWithLinkedList();
+const arr = [3, 1, 2, 6, 9, 5, 8, 4, 7];
+function bucketSort(arr, max, min) {
+  const bucketArr = [];
+  // determine the number of buckets and how many values to put inside
+  
+  // sort values into buckets | ranges 1-3, 4-6, 7-9
+  arr.forEach(val => {
+    let index = Math.floor((val - min) / 3);
+    bucketArr[index] = bucketArr[index] || [];
+    bucketArr[index].push(val);
+  });
+  // sort the values in the buckets
+  for (let i = 0; i < bucketArr.length; i++) {
+    bubbleSort(bucketArr[i]);
+  }
+  // insert values into place based on where there bucket was located
+  return bucketArr.flat();
+}
 
-
+bucketSort(arr, 9, 1);
 
 //-----------------------------------------------------------
 
