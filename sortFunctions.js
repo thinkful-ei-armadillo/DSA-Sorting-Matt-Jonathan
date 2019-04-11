@@ -235,13 +235,12 @@ function bookSort(array) {
     });
   });
   const sortedArr = mergeSort(asciiArr);
-
-  array.forEach((b, j) => {
-    if (b.ascii === sortedArr[j]) {
-      result.push(b);
-    }
-  });
-  return array;
+  
+  for(let i = 0 ; i < sortedArr.length; i++) {
+    let idx = sortedArr.indexOf(array[i].ascii)
+    sortedArr[idx] = array[i]
+  }
+  return sortedArr;
 }
 console.log(bookSort(books));
 
