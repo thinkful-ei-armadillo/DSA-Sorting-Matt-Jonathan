@@ -194,8 +194,56 @@ function bucketSort(arr, max, min) {
   // insert values into place based on where there bucket was located
   return bucketArr.flat();
 }
+//bucketSort(arr, 9, 1);
 
-bucketSort(arr, 9, 1);
+const randomArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+function randomSort(array) {
+  
+  for (let i = 0; i < array.length; i++) {
+    let randomNum = Math.floor(Math.random() * array.length);
+    swap(array, i, randomNum);
+  }
+  return array;
+}
+//console.log(randomSort(randomArr));
+
+const books = [
+  {
+    title: 'book3',
+    content: '...'
+  },
+  {
+    title: 'book4',
+    content: '...'
+  },
+  {
+    title: 'book1',
+    content: '...'
+  },
+  {
+    title: 'book2',
+    content: '...'
+  }
+];
+
+function bookSort(array) {
+  const result = [];
+  const asciiArr = array.map(book => {
+    return book.title.split('').map(b => b.charCodeAt(0)).reduce((c, p) => {
+      book.ascii = p + c;
+      return p + c;
+    });
+  });
+  const sortedArr = mergeSort(asciiArr);
+
+  array.forEach((b, j) => {
+    if (b.ascii === sortedArr[j]) {
+      result.push(b);
+    }
+  });
+  return array;
+}
+console.log(bookSort(books));
 
 //-----------------------------------------------------------
 
