@@ -1,5 +1,12 @@
 const LinkedList = require('./linkedList');
 
+class Node {
+  constructor(value, next) {
+    this.value = value;
+    this.next = null;
+  }
+};
+
 // swap
 function swap(array, i, j) {
   const tmp = array[i];
@@ -22,7 +29,7 @@ function bubbleSort(array) {
   }
   return array;
 }
-let runCount = 1;
+
 // mergeSort
 function mergeSort(array) {
   if (array.length <= 1) {
@@ -82,46 +89,90 @@ function quickSort(array, start = 0, end = array.length) {
     swap(array, end - 1, j);
     return j;
   };
-
+  
   const middle = partition(array, start, end);
   array = quickSort(array, start, middle);
   array = quickSort(array, middle + 1, end);
   return array;
 }
 
-const str =
-  '89 30 25 32 72 70 51 42 25 24 53 55 78 50 13 40 48 32 26 2 14 33 45 72 56 44 21 88 27 68 15 62 93 98 73 28 16 46 87 28 65 38 67 16 85 63 23 69 64 91 9 70 81 27 97 82 6 88 3 7 46 13 11 64 76 31 26 38 28 13 17 69 90 1 6 7 64 43 9 73 80 98 46 27 22 87 49 83 6 39 42 51 54 84 34 53 78 40 14 5';
+/* const str =
+'89 30 25 32 72 70 51 42 25 24 53 55 78 50 13 40 48 32 26 2 14 33 45 72 56 44 21 88 27 68 15 62 93 98 73 28 16 46 87 28 65 38 67 16 85 63 23 69 64 91 9 70 81 27 97 82 6 88 3 7 46 13 11 64 76 31 26 38 28 13 17 69 90 1 6 7 64 43 9 73 80 98 46 27 22 87 49 83 6 39 42 51 54 84 34 53 78 40 14 5';
 
-const tArr = str.split(' ').map(i => Number(i));
+const tArr = str.split(' ').map(i => Number(i)); */
 
 //console.log({ bubbleSort: bubbleSort(testArray) });
-console.log({ mergeSort: mergeSort(tArr) });
+//console.log({ mergeSort: mergeSort(tArr) });
 //console.log({ quickSort: quickSort(tArr) });
 
 function sortingWithLinkedList() {
   const testArray = [21, 1, 26, 45, 29, 28, 2, 9, 16];
+  let rightLLS = new LinkedList();
   let LLS = new LinkedList();
   
   for (let i = 0; i < testArray.length; i++) {
     LLS.insertLast(testArray[i]);
   }
-  
-  const splitList = (LLS) => {
-    let currentNode = LLS.head;
-    while (currentNode.next !== null) {
-      let middle = middleOfList(LLS);
-      let secondHalf = middleOfList(LLS).next;
-      currentNode = middle;
-      currentNode.next = null;
-    }
-    
-    return LLS;
-  };
-  while (size(LLS) > 1) {
-    console.log('ran');
-    splitList(LLS);
 
+  
+  const linkedListMergeSort = (lls, rightLLS) => {
+    if (isEmpty(lls) === 'Empty') {
+      return lls;
+    }
+
+    let { left, right } = splitList(lls, rightLLS);
+    
+    console.log({left});
+
+   
+    left = linkedListMergeSort(left);
+    right = linkedListMergeSort(right);
+
+    // merge
+    const merge = (left, right, lls) => {
+      console.log('ran')
+      let currentLeftNode = left.head;
+      let currentRightNode = right.head;
+      let tempNode = new Node();
+
+      while (currentLeftNode.next !== null) {
+        if (currentLeftNode.value > currentRightNode.value) {
+          tempNode = currentRightNode;
+          tempNode.next = currentLeftNode;
+          lls.head = tempNode;     
+        }
+        if (currentLeftNode.value < currentRightNode.value) {
+          tempNode = currentLeftNode;
+          tempNode.next = currentRightNode;
+          lls.head = tempNode;
+        }
+      }
+
+      return lls;
+    };
+
+    return merge(left, right, lls);
+  };
+
+  linkedListMergeSort(LLS, rightLLS);
+
+}
+function splitList(LLS, rightLLS) {
+  
+  if (rightLLS.head === null) {
+    return rightLLS;
   }
+  let middle = middleOfList(LLS);
+  let right = middle.next;
+
+  while (right.next !== null) {
+    rightLLS.insertLast(right);
+    right = right.next;
+  }
+
+  middle.next = null;
+  console.log({LLS, rightLLS})
+  return { left: LLS, right: rightLLS };
 }
 
 sortingWithLinkedList();
@@ -144,8 +195,9 @@ sortingWithLinkedList();
 function middleOfList(sll) {
   let middleNodeTracker = sll.head;
   let fastNodeTracker = sll.head;
-
-  while (fastNodeTracker.next !== null) {
+  
+    
+  while (fastNodeTracker.next !== null && fastNodeTracker.next.next !== null) {
     middleNodeTracker = middleNodeTracker.next;
     fastNodeTracker = fastNodeTracker.next.next;
   }
@@ -173,8 +225,9 @@ function size(sll) {
 }
 
 function isEmpty(sll) {
-  if (sll.head === null) {
-    return 'Empty';
+  
+  if (sll === undefined || sll.head === null) {
+    return "Empty";
   }
   return 'Not empty';
 }
